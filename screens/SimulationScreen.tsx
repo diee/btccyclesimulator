@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { SimulationState, SimulationConfig } from '../types';
-import { BTC_CYCLE_PRICES, BITCOIN_ORANGE } from '../constants';
+import { BITCOIN_ORANGE } from '../constants';
 
 interface SimulationScreenProps {
   state: SimulationState;
@@ -14,7 +14,8 @@ type ActionType = 'HOLD' | 'SELL_EXPENSES' | 'SELL_5';
 const SimulationScreen: React.FC<SimulationScreenProps> = ({ state, config, onAction }) => {
   const [selectedAction, setSelectedAction] = useState<ActionType | null>(null);
   
-  const currentPrice = BTC_CYCLE_PRICES[state.currentCycle as keyof typeof BTC_CYCLE_PRICES];
+  // Use the prices from the state (which might be custom) instead of constants
+  const currentPrice = state.prices[state.currentCycle] || 0;
   const usdValue = state.btcAmount * currentPrice;
   const cycleExpenses = state.monthlyExpense * 12 * 4;
 
@@ -34,25 +35,26 @@ const SimulationScreen: React.FC<SimulationScreenProps> = ({ state, config, onAc
           <h2 className="text-sm font-medium text-slate-500 uppercase tracking-widest">Ciclo {state.currentCycle} / {config.horizon}</h2>
           <p className="text-2xl font-bold">Año {((state.currentCycle - 1) * 4) + 1} - {state.currentCycle * 4}</p>
         </div>
-        <div className="bg-slate-800 p-2 rounded-lg text-xs text-orange-400 font-mono">
-          Price: ${currentPrice.toLocaleString()}
+        <div className="bg-slate-800 p-2 rounded-lg text-xs text-orange-400 font-mono border border-slate-700">
+          Precio: ${currentPrice.toLocaleString()}
         </div>
       </header>
 
       <div className="grid grid-cols-1 gap-4 mb-8">
-        <div className="bg-slate-800/50 border border-slate-700 rounded-2xl p-6 text-center shadow-inner">
-          <p className="text-slate-400 text-sm mb-1">Patrimonio Actual</p>
-          <p className="text-4xl font-bold mono text-white mb-2">${usdValue.toLocaleString()}</p>
-          <p className="text-orange-400 font-mono font-bold text-lg">{state.btcAmount.toFixed(4)} ₿</p>
+        <div className="bg-slate-800/50 border border-slate-700 rounded-3xl p-6 text-center shadow-inner relative overflow-hidden">
+          <div className="absolute top-0 right-0 p-4 opacity-10 text-6xl">₿</div>
+          <p className="text-slate-400 text-sm mb-1 relative z-10">Patrimonio Actual</p>
+          <p className="text-4xl font-bold mono text-white mb-2 relative z-10">${usdValue.toLocaleString()}</p>
+          <p className="text-orange-400 font-mono font-bold text-lg relative z-10">{state.btcAmount.toFixed(4)} ₿</p>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
-          <div className="bg-slate-800/30 p-4 rounded-xl border border-slate-800">
-            <p className="text-[10px] text-slate-500 uppercase font-bold mb-1">Gasto del Ciclo</p>
-            <p className="text-xl font-bold">${cycleExpenses.toLocaleString()}</p>
+          <div className="bg-slate-800/30 p-4 rounded-2xl border border-slate-800">
+            <p className="text-[10px] text-slate-500 uppercase font-bold mb-1 tracking-tighter">Gasto del Ciclo</p>
+            <p className="text-xl font-bold text-slate-200">${cycleExpenses.toLocaleString()}</p>
           </div>
-          <div className="bg-slate-800/30 p-4 rounded-xl border border-slate-800">
-            <p className="text-[10px] text-slate-500 uppercase font-bold mb-1">Gastado Total</p>
+          <div className="bg-slate-800/30 p-4 rounded-2xl border border-slate-800">
+            <p className="text-[10px] text-slate-500 uppercase font-bold mb-1 tracking-tighter">Gastado Total</p>
             <p className="text-xl font-bold text-red-400">${state.totalSpentUsd.toLocaleString()}</p>
           </div>
         </div>
@@ -66,7 +68,7 @@ const SimulationScreen: React.FC<SimulationScreenProps> = ({ state, config, onAc
           className={`w-full border-2 p-4 rounded-2xl flex items-center gap-4 transition-all text-left group ${
             selectedAction === 'HOLD' 
               ? 'bg-orange-500/10 border-orange-500' 
-              : 'bg-slate-800/50 border-slate-700 hover:bg-slate-800'
+              : 'bg-slate-800/50 border-slate-700 hover:border-slate-500'
           }`}
         >
           <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-transform ${
@@ -74,7 +76,7 @@ const SimulationScreen: React.FC<SimulationScreenProps> = ({ state, config, onAc
           }`}>
              💎
           </div>
-          <div>
+          <div className="flex-1">
             <p className={`font-bold ${selectedAction === 'HOLD' ? 'text-orange-400' : 'text-white'}`}>Mantener (HODL)</p>
             <p className="text-xs text-slate-400">No vendes nada. Los gastos se cubren externamente.</p>
           </div>
@@ -85,7 +87,7 @@ const SimulationScreen: React.FC<SimulationScreenProps> = ({ state, config, onAc
           className={`w-full border-2 p-4 rounded-2xl flex items-center gap-4 transition-all text-left group ${
             selectedAction === 'SELL_EXPENSES' 
               ? 'bg-blue-500/10 border-blue-500' 
-              : 'bg-slate-800/50 border-slate-700 hover:bg-slate-800'
+              : 'bg-slate-800/50 border-slate-700 hover:border-slate-500'
           }`}
         >
           <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-transform ${
@@ -93,9 +95,9 @@ const SimulationScreen: React.FC<SimulationScreenProps> = ({ state, config, onAc
           }`}>
              💸
           </div>
-          <div>
+          <div className="flex-1">
             <p className={`font-bold ${selectedAction === 'SELL_EXPENSES' ? 'text-blue-400' : 'text-white'}`}>Vivir del BTC este ciclo</p>
-            <p className="text-xs text-slate-400">Vendes {(cycleExpenses / currentPrice).toFixed(4)} ₿ para cubrir los gastos de estos 4 años.</p>
+            <p className="text-xs text-slate-400">Vendes {(cycleExpenses / currentPrice).toFixed(4)} ₿ para financiar los gastos de estos 4 años.</p>
           </div>
         </button>
 
@@ -104,7 +106,7 @@ const SimulationScreen: React.FC<SimulationScreenProps> = ({ state, config, onAc
           className={`w-full border-2 p-4 rounded-2xl flex items-center gap-4 transition-all text-left group ${
             selectedAction === 'SELL_5' 
               ? 'bg-emerald-500/10 border-emerald-500' 
-              : 'bg-slate-800/50 border-slate-700 hover:bg-slate-800'
+              : 'bg-slate-800/50 border-slate-700 hover:border-slate-500'
           }`}
         >
           <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-transform ${
@@ -112,9 +114,9 @@ const SimulationScreen: React.FC<SimulationScreenProps> = ({ state, config, onAc
           }`}>
              💰
           </div>
-          <div>
+          <div className="flex-1">
             <p className={`font-bold ${selectedAction === 'SELL_5' ? 'text-emerald-400' : 'text-white'}`}>Tomar beneficios (5%)</p>
-            <p className="text-xs text-slate-400">Vendes el 5% de tu stack para mejorar tu vida.</p>
+            <p className="text-xs text-slate-400">Vendes una pequeña parte para mejorar tu calidad de vida.</p>
           </div>
         </button>
       </div>

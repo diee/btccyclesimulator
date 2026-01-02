@@ -1,20 +1,23 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
 
-# Run and deploy your AI Studio app
+# BTC Cycles Simulator
 
-This contains everything you need to run your app locally.
+Simulador educativo para explorar escenarios financieros basados en la acumulación de Bitcoin a largo plazo.
 
-View your app in AI Studio: https://ai.studio/apps/temp/1
+## 🚀 Cómo publicarlo en GitHub (Gratis)
 
-## Run Locally
+Esta aplicación está diseñada para funcionar sin necesidad de herramientas de compilación complejas (usa ESM). Para verla online:
 
-**Prerequisites:**  Node.js
+1. **Crea un repositorio** en GitHub (ej. `btc-simulator`).
+2. **Sube todos los archivos** de este proyecto (incluyendo `index.html`, `index.tsx`, etc.).
+3. Ve a **Settings** (Configuración) de tu repositorio.
+4. En el menú lateral, selecciona **Pages**.
+5. En "Build and deployment", asegúrate de que esté seleccionado "Deploy from a branch".
+6. Elige la rama `main` (o `master`) y la carpeta `/ (root)`.
+7. Haz clic en **Save**.
 
+En un par de minutos, GitHub te dará una URL (ej: `https://tu-usuario.github.io/btc-simulator/`) donde podrás usar la app desde cualquier navegador o móvil.
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+## ⚠️ Disclaimer
+Esta aplicación es únicamente para fines educativos y recreativos. No constituye asesoramiento financiero, legal o de inversión.
+
+TEST
