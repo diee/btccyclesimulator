@@ -19,5 +19,3 @@ En un par de minutos, GitHub te dará una URL (ej: `https://tu-usuario.github.io
 
 ## ⚠️ Disclaimer
 Esta aplicación es únicamente para fines educativos y recreativos. No constituye asesoramiento financiero, legal o de inversión.
-
-TEST
